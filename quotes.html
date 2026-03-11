@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title id="page-title">your family health plan · plum</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --red:#E8384F; --dark:#2D0A22; --cream:#FEF4EC;
+  --maroon:#3B0D2A; --body:#6B5660; --light:#F5EDE5;
+  --white:#FFFFFF; --border:rgba(59,13,42,.08);
+  --shadow:0 2px 16px rgba(45,10,34,.07);
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;}
+html{font-size:16px;}
+body{font-family:'DM Sans',sans-serif;background:#F7EFE8;color:var(--maroon);max-width:390px;margin:0 auto;overflow-x:hidden;padding-bottom:20px;}
+.serif{font-family:'Playfair Display',serif;}
+.label{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--red);}
+
+/* EXPIRED STATE */
+.expired-wall{display:none;position:fixed;inset:0;background:var(--dark);z-index:9999;align-items:center;justify-content:center;flex-direction:column;padding:40px;text-align:center;}
+.expired-wall.show{display:flex;}
+.expired-logo{font-weight:800;font-size:22px;color:var(--red);margin-bottom:32px;}
+.expired-title{font-family:'Playfair Display',serif;font-size:28px;color:var(--light);line-height:1.3;margin-bottom:12px;}
+.expired-sub{font-size:14px;color:rgba(245,237,229,.5);line-height:1.7;margin-bottom:32px;}
+.expired-wa{display:inline-flex;align-items:center;gap:8px;background:#25D366;color:#fff;font-size:14px;font-weight:700;padding:16px 24px;border-radius:12px;text-decoration:none;}
+
+/* HERO */
+.hero{background:var(--dark);padding:52px 24px 40px;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;top:-100px;right:-100px;width:280px;height:280px;border-radius:50%;background:radial-gradient(circle,rgba(232,56,79,.12),transparent 65%);pointer-events:none;}
+.logo{font-weight:800;font-size:18px;color:var(--red);letter-spacing:-.3px;margin-bottom:40px;display:block;}
+.hero-name{font-family:'Playfair Display',serif;font-size:48px;font-weight:400;color:var(--light);line-height:1.0;animation:up .7s ease both;}
+.hero-sub{font-size:14px;color:rgba(245,237,229,.45);margin-top:10px;font-weight:300;line-height:1.6;animation:up .7s .15s ease both;opacity:0;}
+@keyframes up{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+
+/* INSIGHT */
+.insight{background:var(--red);padding:22px 24px;}
+.insight-eye{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.55);margin-bottom:7px;}
+.insight-text{font-family:'Playfair Display',serif;font-size:18px;color:#fff;line-height:1.45;margin-bottom:8px;}
+.insight-sub{font-size:13px;color:rgba(255,255,255,.72);line-height:1.65;}
+
+/* CARDS */
+.section{padding:24px 16px 0;}
+.section+.section{padding-top:0;}
+
+/* ADVISOR */
+.advisor-card{background:var(--white);border-radius:20px;padding:20px;box-shadow:var(--shadow);margin-bottom:12px;}
+.advisor-top{display:flex;gap:14px;align-items:flex-start;margin-bottom:14px;}
+.advisor-photo{width:64px;height:64px;border-radius:50%;object-fit:cover;flex-shrink:0;border:3px solid #F7EFE8;background:#F7EFE8;}
+.advisor-photo-placeholder{width:64px;height:64px;border-radius:50%;flex-shrink:0;border:3px solid #F7EFE8;background:linear-gradient(135deg,#f7b89c,#c7a0d8);display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;color:white;}
+.advisor-name{font-size:16px;font-weight:700;color:var(--maroon);line-height:1.2;margin-bottom:3px;}
+.advisor-role{font-size:11px;color:var(--body);line-height:1.4;margin-bottom:8px;}
+.badges{display:flex;flex-wrap:wrap;gap:5px;}
+.badge{font-size:10px;font-weight:600;padding:4px 9px;border-radius:20px;background:#F7EFE8;color:var(--body);}
+.advisor-divider{height:1px;background:var(--border);margin-bottom:14px;}
+.advisor-note{font-family:'Playfair Display',serif;font-style:italic;font-size:14px;color:var(--body);line-height:1.65;margin-bottom:13px;}
+.wa-link{display:flex;align-items:center;gap:7px;font-size:12px;color:#128C7E;font-weight:600;text-decoration:none;}
+.wa-dot{width:7px;height:7px;background:#25D366;border-radius:50%;flex-shrink:0;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* PED */
+.ped{background:#FFFBEB;border:1.5px solid rgba(245,200,66,.5);border-radius:16px;padding:16px;margin-bottom:12px;display:flex;gap:12px;align-items:flex-start;}
+.ped-icon{font-size:20px;flex-shrink:0;line-height:1;}
+.ped-title{font-size:13px;font-weight:700;color:var(--maroon);margin-bottom:4px;}
+.ped-text{font-size:12px;color:var(--body);line-height:1.65;}
+.ped-text strong{color:var(--maroon);}
+
+/* PLAN CARD */
+.plan-card{background:var(--dark);border-radius:20px;padding:24px;margin-bottom:12px;position:relative;overflow:hidden;}
+.plan-card::after{content:'';position:absolute;bottom:-50px;right:-50px;width:160px;height:160px;border-radius:50%;background:radial-gradient(circle,rgba(232,56,79,.15),transparent 70%);pointer-events:none;}
+.plan-insurer{font-size:10px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:rgba(245,237,229,.35);margin-bottom:5px;}
+.plan-name{font-family:'Playfair Display',serif;font-size:28px;color:var(--light);line-height:1.1;margin-bottom:3px;}
+.plan-type{font-size:12px;color:rgba(245,237,229,.35);margin-bottom:22px;}
+.plan-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
+.pstat{background:rgba(255,255,255,.07);border-radius:12px;padding:14px;}
+.pstat .v{font-size:22px;font-weight:300;color:#fff;line-height:1;margin-bottom:4px;}
+.pstat .v em{font-size:12px;font-style:normal;color:var(--red);}
+.pstat .l{font-size:10px;color:rgba(245,237,229,.38);line-height:1.4;}
+.plan-note{background:rgba(232,56,79,.1);border-radius:10px;padding:13px;font-size:12px;color:rgba(245,237,229,.65);line-height:1.65;}
+.plan-note strong{color:rgba(232,56,79,.9);}
+
+/* SECTION HEADER */
+.sec-header{margin-bottom:14px;}
+.sec-title{font-family:'Playfair Display',serif;font-size:22px;color:var(--maroon);line-height:1.25;margin-top:4px;}
+
+/* COVERS */
+.covers-card{background:var(--white);border-radius:20px;padding:4px 0;box-shadow:var(--shadow);margin-bottom:12px;overflow:hidden;}
+.cover-row{display:flex;gap:14px;align-items:flex-start;padding:15px 18px;border-bottom:1px solid var(--border);}
+.cover-row:last-child{border-bottom:none;}
+.cover-icon{width:36px;height:36px;border-radius:10px;background:#F7EFE8;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;}
+.cover-h{font-size:13px;font-weight:600;color:var(--maroon);margin-bottom:3px;line-height:1.3;}
+.cover-p{font-size:12px;color:var(--body);line-height:1.55;}
+
+/* WAITING */
+.wait-card{background:linear-gradient(145deg,#fde4cc,#f9c8d0);border-radius:20px;padding:22px;margin-bottom:12px;}
+.wait-title{font-family:'Playfair Display',serif;font-size:20px;color:var(--maroon);line-height:1.3;margin-bottom:8px;}
+.wait-sub{font-size:13px;color:var(--body);line-height:1.65;margin-bottom:18px;}
+.age-row{display:flex;align-items:center;gap:10px;margin-bottom:9px;}
+.age-lbl{font-size:11px;font-weight:600;color:var(--maroon);width:48px;flex-shrink:0;}
+.age-track{flex:1;height:8px;background:rgba(59,13,42,.1);border-radius:4px;overflow:hidden;}
+.age-fill{height:100%;border-radius:4px;background:var(--red);}
+.age-price{font-size:11px;font-weight:700;color:var(--maroon);width:70px;text-align:right;flex-shrink:0;}
+.age-row.you .age-lbl{color:var(--red);}
+.age-row.you .age-fill{background:var(--maroon);}
+.age-row.you .age-price{color:var(--red);}
+.wait-fact{margin-top:16px;background:rgba(59,13,42,.07);border-radius:10px;padding:13px;font-size:12px;color:var(--maroon);line-height:1.65;}
+
+/* COMPARE */
+.compare-card{background:var(--white);border-radius:20px;overflow:hidden;box-shadow:var(--shadow);margin-bottom:8px;}
+.compare-sub{font-size:12px;color:var(--body);line-height:1.65;margin-bottom:14px;}
+.cthead{display:grid;grid-template-columns:1.6fr 1fr 1fr;background:var(--dark);padding:13px 16px;gap:6px;}
+.cthead div{font-size:9px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:rgba(245,237,229,.45);text-align:center;}
+.cthead div:first-child{text-align:left;}
+.cthead .hl{color:rgba(232,56,79,.85)!important;}
+.crow{display:grid;grid-template-columns:1.6fr 1fr 1fr;padding:13px 16px;gap:6px;border-bottom:1px solid var(--border);align-items:center;}
+.crow:last-child{border-bottom:none;}
+.crow.alt{background:rgba(248,240,235,.6);}
+.cl{font-size:11px;color:var(--body);line-height:1.4;}
+.cv{font-size:11px;font-weight:500;color:var(--maroon);text-align:center;line-height:1.3;}
+.cv.win{color:var(--red);font-weight:700;}
+.cv.dim{color:rgba(92,74,82,.35);font-size:11px;}
+.cfooter{padding:14px 16px;background:rgba(248,240,235,.8);font-size:11px;color:var(--body);line-height:1.65;margin-bottom:24px;}
+.cfooter strong{color:var(--maroon);}
+
+/* COMPARE — dynamic recommended/muted */
+.cv.muted{color:rgba(92,74,82,.3);font-weight:400;}
+.cthead .muted-hd{color:rgba(245,237,229,.25)!important;font-style:italic;}
+.crow.highlight-row .cv.win{background:rgba(232,56,79,.06);border-radius:6px;padding:3px 6px;}
+.compare-also{font-size:9px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:rgba(245,237,229,.22);margin-top:2px;}
+
+
+.irdai-callout{background:#fff;border-left:4px solid var(--red);border-radius:0 12px 12px 0;padding:16px;margin:12px 0;box-shadow:var(--shadow);}
+.irdai-label{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--red);margin-bottom:6px;}
+.irdai-text{font-size:12px;color:var(--body);line-height:1.7;}
+
+.pstat-social .v{color:var(--red)!important;}
+
+/* TRUST */
+.trust{background:var(--dark);padding:32px 20px 28px;margin-top:24px;padding-bottom:80px;}
+.trust-eye{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--red);margin-bottom:6px;}
+.trust-hl{font-family:'Playfair Display',serif;font-size:22px;color:var(--light);line-height:1.35;margin-bottom:24px;}
+.tstats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:22px;}
+.tstat{background:rgba(255,255,255,.06);border-radius:14px;padding:16px;text-align:center;}
+.tstat .n{font-size:26px;font-weight:300;color:#fff;line-height:1;margin-bottom:5px;}
+.tstat .d{font-size:10px;color:rgba(245,237,229,.38);line-height:1.45;}
+.logos-label{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(245,237,229,.35);margin-bottom:10px;}
+.logos-wrap{position:relative;}
+.logos-wrap::after{content:'';position:absolute;top:0;right:0;height:100%;width:40px;background:linear-gradient(to right,transparent,#2D0A22);pointer-events:none;}
+.logos-scroll{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none;-webkit-overflow-scrolling:touch;margin:0 -20px;padding:0 20px 4px;}
+.logos-scroll::-webkit-scrollbar{display:none;}
+.lpill{background:rgba(255,255,255,.07);border-radius:20px;padding:6px 13px;font-size:11px;color:rgba(245,237,229,.5);font-weight:500;white-space:nowrap;flex-shrink:0;}
+.trust-tests{margin-top:22px;}
+.wa-test{background:rgba(37,211,102,.07);border:1px solid rgba(37,211,102,.15);border-radius:0 14px 14px 14px;padding:15px;margin-bottom:10px;position:relative;}
+.wa-test::before{content:'';position:absolute;top:0;left:-8px;border:8px solid transparent;border-top-color:rgba(37,211,102,.07);border-left:none;}
+.wa-msg{font-size:13px;color:rgba(245,237,229,.8);line-height:1.65;margin-bottom:6px;}
+.wa-time{font-size:10px;color:rgba(245,237,229,.28);text-align:right;}
+.test-card{background:rgba(255,255,255,.05);border-radius:14px;padding:16px;margin-bottom:10px;}
+.test-q{font-family:'Playfair Display',serif;font-style:italic;font-size:13px;color:rgba(245,237,229,.78);line-height:1.7;margin-bottom:10px;}
+.test-a{font-size:10px;color:rgba(245,237,229,.38);font-weight:500;}
+.test-a strong{color:rgba(245,237,229,.62);}
+
+/* VALIDITY */
+.validity{margin:20px 16px 0;border:1.5px dashed rgba(232,56,79,.2);border-radius:14px;padding:14px 16px;display:flex;gap:11px;align-items:flex-start;background:rgba(232,56,79,.03);}
+.val-icon{font-size:18px;flex-shrink:0;margin-top:1px;}
+.val-text{font-size:12px;color:var(--body);line-height:1.65;}
+.val-text strong{color:var(--maroon);}
+
+/* CTA */
+.cta{padding:28px 16px 32px;}
+.cta-hl{font-family:'Playfair Display',serif;font-size:26px;color:var(--maroon);margin-bottom:8px;line-height:1.25;}
+.cta-sub{font-size:13px;color:var(--body);line-height:1.65;margin-bottom:6px;}
+.cta-quote{font-size:11px;font-style:italic;color:var(--red);margin-bottom:22px;line-height:1.5;}
+.btn-wa{display:flex;align-items:center;justify-content:center;gap:10px;background:#25D366;color:#fff;font-size:15px;font-weight:700;padding:18px 24px;border-radius:14px;text-decoration:none;width:100%;margin-bottom:10px;box-shadow:0 6px 20px rgba(37,211,102,.25);letter-spacing:-.2px;}
+.btn-share{display:flex;align-items:center;justify-content:center;gap:9px;background:transparent;border:1.5px solid var(--border);color:var(--body);font-size:13px;font-weight:500;padding:15px 24px;border-radius:14px;text-decoration:none;width:100%;margin-bottom:20px;}
+
+/* FLOATER */
+.floater{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:390px;z-index:100;pointer-events:none;}
+.floater-inner{margin:0 12px 12px;background:var(--dark);border-radius:16px;padding:12px 16px;box-shadow:0 8px 32px rgba(45,10,34,.35),0 2px 8px rgba(45,10,34,.2);pointer-events:all;border:1px solid rgba(255,255,255,.06);}
+.floater-row{display:flex;align-items:flex-start;gap:10px;}
+.floater-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#f7b89c,#c7a0d8);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:white;}
+.floater-content{flex:1;min-width:0;}
+.floater-text{font-size:11px;color:rgba(245,237,229,.75);line-height:1.5;margin-bottom:3px;}
+.floater-attr{font-size:10px;color:rgba(245,237,229,.35);}
+.floater-nav{display:flex;gap:5px;align-items:center;justify-content:center;margin-top:10px;}
+.fdot{width:5px;height:5px;border-radius:50%;background:rgba(245,237,229,.2);cursor:pointer;transition:background .2s;}
+.fdot.active{background:var(--red);width:14px;border-radius:3px;}
+
+/* FINE + FOOTER */
+.fine{font-size:10px;color:rgba(92,74,82,.4);line-height:1.75;text-align:center;}
+.fine a{color:rgba(92,74,82,.55);text-decoration:none;border-bottom:1px solid rgba(92,74,82,.2);}
+.footer{background:var(--dark);padding:20px;display:flex;justify-content:space-between;align-items:center;}
+.footer-logo{font-weight:800;font-size:16px;color:var(--red);}
+.footer-copy{font-size:9px;color:rgba(245,237,229,.2);text-align:right;line-height:1.8;}
+
+.gap4{height:4px;} .gap8{height:8px;} .gap12{height:12px;} .gap16{height:16px;} .gap20{height:20px;} .gap24{height:24px;}
+.divider{height:1px;background:var(--border);margin:0 16px;}
+</style>
+</head>
+<body>
+
+<!-- EXPIRED WALL -->
+<div class="expired-wall" id="expiredWall">
+  <div class="expired-logo">plum</div>
+  <div class="expired-title">this quote has expired.</div>
+  <div class="expired-sub">premiums recalculate based on your current age and health profile. your advisor can send you a fresh quote in minutes.</div>
+  <a href="#" class="expired-wa" id="expiredWaLink">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+    message your advisor
+  </a>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <span class="logo">plum</span>
+  <div class="hero-name">Hi <span id="customerName">there</span>,</div>
+  <p class="hero-sub"><span id="advisorFirstName">your advisor</span> put this together for you and your family —<br>take 3 minutes to read it.</p>
+</section>
+
+<!-- AHA MOMENT -->
+<div class="insight">
+  <div class="insight-eye">before you scroll</div>
+  <div class="insight-text">your plum cover at work is a great start. this covers the rest, even on a career break.</div>
+  <div class="insight-sub">a personal plan covers beyond your company cover, and travels with you wherever life takes you.</div>
+</div>
+
+<!-- ADVISOR -->
+<div class="section"><div class="gap20"></div>
+  <div class="advisor-card">
+    <div class="advisor-top">
+      <div class="advisor-photo-placeholder" id="advisorAvatar">R</div>
+      <div>
+        <div class="advisor-name" id="advisorName">Rohan Phatale</div>
+        <div class="advisor-role">health insurance advisor · plum personal</div>
+        <div class="badges">
+          <span class="badge">⭐ <span id="advisorRating">4.9</span> rating</span>
+          <span class="badge"><span id="advisorFamilies">200</span>+ families</span>
+          <span class="badge">IRDAI certified</span>
+          <span class="badge"><span id="advisorYears">3</span> yrs at plum</span>
+        </div>
+      </div>
+    </div>
+    <div class="advisor-divider"></div>
+    <div class="advisor-note" id="advisorNote">"i looked at your situation and put together what i'd recommend for my own family at your age."</div>
+    <a href="#" class="wa-link" id="advisorWaLink">
+      <div class="wa-dot"></div>
+      available on whatsapp · usually replies in &lt;2 hrs
+    </a>
+  </div>
+
+  <!-- PED - only shown if ped param is set -->
+  <div class="ped" id="pedSection" style="display:none;">
+    <div class="ped-icon">ℹ️</div>
+    <div>
+      <div class="ped-title" id="pedTitle">about your declared condition</div>
+      <div class="ped-text" id="pedText">this condition has a <strong id="pedWait">2-year</strong> waiting period. everything else — accidents, surgery, hospitalization — is covered from day 1. the earlier you start, <strong>the sooner your waiting period ends.</strong></div>
+    </div>
+  </div>
+</div>
+
+<!-- YOUR PLAN -->
+<div class="section"><div class="gap4"></div>
+  <div class="label">your recommended plan</div>
+  <div class="gap8"></div>
+  <div class="plan-card">
+    <div class="plan-insurer" id="planInsurer">ICICI Lombard · Elevate</div>
+    <div class="plan-name">₹<span id="planCover">10</span> lakh cover</div>
+    <div class="plan-type">individual plan · <span id="advisorFirstName2">your advisor</span>'s pick for your age &amp; profile</div>
+    <div class="plan-grid" id="planGrid">
+      <!-- populated by JS -->
+    </div>
+    <div class="plan-note" id="planNote"><!-- populated by JS --></div>
+  </div>
+
+  <div class="irdai-callout">
+    <div class="irdai-label">same price, everywhere. irdai regulates it.</div>
+    <div class="irdai-text">the price here is the same everywhere. irdai regulates it. no platform <em>should</em> beat it, no broker <em>should</em> discount it. what you are choosing is not a price. it is who is there when you need to use it.</div>
+  </div>
+</div>
+
+<!-- COVERS -->
+<div class="section"><div class="gap16"></div>
+  <div class="sec-header">
+    <div class="label">what this covers</div>
+    <div class="sec-title">what you're actually protected for</div>
+  </div>
+  <div class="covers-card">
+    <div class="cover-row"><div class="cover-icon">🏥</div><div><div class="cover-h">any room, no hidden limits</div><div class="cover-p">private room, ICU: no sub-limits on what you choose. your corporate plan likely has these restrictions.</div></div></div>
+    <div class="cover-row"><div class="cover-icon">💊</div><div><div class="cover-h">the small costs hospitals sneak in</div><div class="cover-p">gloves, syringes, consumables: covered. these add ₹20K to ₹50K to most hospital bills.</div></div></div>
+    <div class="cover-row"><div class="cover-icon">🕐</div><div><div class="cover-h">90 days before, 180 days after</div><div class="cover-p">tests, scans, recovery: fully covered. most plans stop at discharge.</div></div></div>
+    <div class="cover-row"><div class="cover-icon">🏠</div><div><div class="cover-h">treatment at home</div><div class="cover-p">domiciliary care up to full sum insured, for when home is safer than a hospital.</div></div></div>
+  </div>
+</div>
+
+<!-- COST OF WAITING -->
+<div class="section"><div class="gap8"></div>
+  <div class="sec-header">
+    <div class="label">the honest truth</div>
+    <div class="sec-title">every year you wait, it gets more expensive</div>
+  </div>
+  <div class="wait-card">
+    <div class="wait-sub">insurance pricing is age-based. premiums typically rise 7-27% every 5 years. here is what that means across age groups:</div>
+    <div class="age-row"><div class="age-lbl">26-30</div><div class="age-track"><div class="age-fill" style="width:35%"></div></div><div class="age-price">base price</div></div>
+    <div class="age-row you" id="yourAgeRow"><div class="age-lbl">you</div><div class="age-track"><div class="age-fill" id="yourAgeFill" style="width:58%"></div></div><div class="age-price" id="yourAgePremium">your quote</div></div>
+    <div class="age-row"><div class="age-lbl">36-40</div><div class="age-track"><div class="age-fill" style="width:78%"></div></div><div class="age-price">~23% more</div></div>
+    <div class="age-row"><div class="age-lbl">46-50</div><div class="age-track"><div class="age-fill" style="width:100%"></div></div><div class="age-price">~50% more</div></div>
+    <div class="wait-fact" id="waitFact">every month you delay is a month your family is not fully covered.</div>
+    <div style="font-size:10px;color:rgba(59,13,42,.35);margin-top:10px;line-height:1.6;">% changes are indicative, based on current ICICI Elevate pricing for a 10L individual plan. actual premiums vary by insurer, cover amount and health profile. plum guidance only.</div>
+  </div>
+</div>
+
+<!-- COMPARE -->
+<div class="section"><div class="gap8"></div>
+  <div class="sec-header">
+    <div class="label">how it compares</div>
+    <div class="sec-title">same price. different choices.</div>
+  </div>
+  <div class="compare-card">
+    <div class="cthead" id="compareHead">
+      <!-- populated by JS -->
+    </div>
+    <div id="compareRows">
+      <!-- populated by JS -->
+    </div>
+    <div class="cfooter" id="compareFooer"><!-- populated by JS --></div>
+  </div>
+</div>
+
+<!-- TRUST -->
+<div class="trust">
+  <div class="trust-eye">why plum</div>
+  <div class="trust-hl">you already know us from work. this is the same care, for your family.</div>
+  <div class="tstats">
+    <div class="tstat"><div class="n">4,500+</div><div class="d">companies trust plum for employee health</div></div>
+    <div class="tstat"><div class="n">500K+</div><div class="d">lives covered across india</div></div>
+    <div class="tstat"><div class="n">NPS 80</div><div class="d">vs industry average of 60</div></div>
+    <div class="tstat"><div class="n">₹180Cr+</div><div class="d">in claims settled for families</div></div>
+  </div>
+  <div class="logos-label">trusted by india's best companies</div>
+  <div class="logos-wrap">
+    <div class="logos-scroll">
+      <div class="lpill">swiggy</div><div class="lpill">zomato</div><div class="lpill">cred</div>
+      <div class="lpill">atlassian</div><div class="lpill">unacademy</div><div class="lpill">wework</div>
+      <div class="lpill">chargebee</div><div class="lpill">meesho</div><div class="lpill">tinder</div>
+      <div class="lpill">rippling</div><div class="lpill">postman</div><div class="lpill">healthifyme</div>
+      <div class="lpill">zerodha</div><div class="lpill">coinDCX</div><div class="lpill">nanonets</div>
+    </div>
+  </div>
+  <div class="trust-tests">
+    <div class="wa-test">
+      <div class="wa-msg">"my father was admitted at 11pm. i messaged shubham at plum. by morning, the cashless was approved."</div>
+      <div class="wa-time">rahul sharma, operations analyst, 11:47 PM</div>
+    </div>
+    <div class="test-card">
+      <div class="test-q">"i had company insurance and thought i was covered. switched jobs and coverage was gone overnight. getting a personal plan was the best thing i did for my family."</div>
+      <div class="test-a"><strong>saurabh moody</strong>, plum personal customer</div>
+    </div>
+    <div class="test-card">
+      <div class="test-q">"they are genuinely invested in helping you decide, even if that means a different plan. felt like a friend, not a salesperson."</div>
+      <div class="test-a"><strong>kawaljeet</strong>, director of operations</div>
+    </div>
+  </div>
+</div>
+
+<!-- VALIDITY -->
+<div class="validity">
+  <div class="val-icon">📅</div>
+  <div class="val-text">this quote is valid until <strong id="expiryDisplay">—</strong>. after this, your premium recalculates based on updated age and health profile.</div>
+</div>
+
+<!-- CTA -->
+<div class="cta">
+  <div class="cta-hl">ready to protect your family?</div>
+  <div class="cta-sub"><span id="advisorFirstName6">your advisor</span> can walk you through it, no jargon, 10 minutes.</div>
+  <div class="cta-quote">"rohan answered my 11pm hospital question in 8 minutes." rahul</div>
+  <a href="#" class="btn-wa" id="ctaWaLink">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+    talk to <span id="advisorFirstName7">your advisor</span>
+  </a>
+  <a href="#" class="btn-share" id="shareBtn">🔗 share with friends or family</a>
+  <div class="fine">
+    insurance pricing is regulated by IRDAI (broker license: IRDA/DB-797/2019).<br>
+    the premium shown is identical on every platform in india.<br><br>
+    <a href="https://plumhq.com">plumhq.com</a> · © Plum Benefits Pvt Ltd
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <div class="footer-logo">plum</div>
+  <div class="footer-copy">© Plum Benefits Pvt Ltd<br>IRDAI · IRDA/DB-797/2019</div>
+</div>
+
+<!-- FLOATING TESTIMONIAL BAR -->
+<div class="floater" id="floater">
+  <div class="floater-inner">
+    <div class="floater-row">
+      <div class="floater-avatar" id="f-avatar">R</div>
+      <div class="floater-content">
+        <div class="floater-text" id="f-text">"my father was admitted at 11pm. by morning, cashless approved."</div>
+        <div class="floater-attr" id="f-attr">rahul sharma · operations analyst</div>
+      </div>
+    </div>
+    <div class="floater-nav">
+      <div class="fdot active" onclick="goSlide(0)"></div>
+      <div class="fdot" onclick="goSlide(1)"></div>
+      <div class="fdot" onclick="goSlide(2)"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── PARAM PARSER ──────────────────────────────────────────
+const p = new URLSearchParams(window.location.search);
+const get = (key, fallback='') => p.get(key) || fallback;
+
+// All URL parameters:
+// name         = customer first name (e.g. rohit)
+// age          = customer age (e.g. 34)
+// premium      = annual premium in INR without commas (e.g. 7732)
+// cover        = sum insured in lakhs (e.g. 10)
+// advisor      = advisor full name (e.g. Rohan Phatale)
+// advisor_wa   = advisor whatsapp number with country code, no + (e.g. 919876543210)
+// advisor_rating = advisor rating (e.g. 4.9)
+// advisor_families = families helped (e.g. 200)
+// advisor_years = years at plum (e.g. 3)
+// insurer      = insurer name (e.g. ICICI Lombard · Elevate)
+// insurer_short = short name for compare table (e.g. icici elevate)
+// ped          = pre-existing condition slug (e.g. diabetes | hypertension | thyroid | none)
+// ped_wait     = waiting period in years (e.g. 2)
+// expiry       = expiry date as YYYYMMDD (e.g. 20260318)
+// created      = created date as YYYYMMDD (auto-set if not provided)
+
+const customerName = get('name', 'there');
+const age = parseInt(get('age', '34'));
+const premiumRaw = parseInt(get('premium', '7732'));
+const cover = parseInt(get('cover', '10'));
+const advisorFull = get('advisor', 'Rohan Phatale');
+const advisorFirst = advisorFull.split(' ')[0];
+const advisorWa = get('advisor_wa', '919876543210');
+const advisorRating = get('advisor_rating', '4.9');
+const advisorFamilies = get('advisor_families', '200');
+const advisorYears = get('advisor_years', '3');
+const insurer = get('insurer', 'ICICI Lombard · Elevate');
+const insurerShort = get('insurer_short', 'icici elevate');
+const ped = get('ped', '');
+const pedWait = get('ped_wait', '2');
+const expiryParam = get('expiry', '');
+
+// ─── EXPIRY CHECK ──────────────────────────────────────────
+function parseDate(str) {
+  // YYYYMMDD
+  return new Date(str.slice(0,4), parseInt(str.slice(4,6))-1, str.slice(6,8));
+}
+
+// Default: 15 days from today if no expiry param
+let expiryDate;
+if (expiryParam) {
+  expiryDate = parseDate(expiryParam);
+} else {
+  expiryDate = new Date();
+  expiryDate.setDate(expiryDate.getDate() + 15);
+}
+
+const today = new Date();
+today.setHours(0,0,0,0);
+expiryDate.setHours(0,0,0,0);
+
+const isExpired = today > expiryDate;
+
+if (isExpired) {
+  document.getElementById('expiredWall').classList.add('show');
+  document.getElementById('expiredWaLink').href = `https://wa.me/${advisorWa}?text=Hi%20${advisorFirst}%2C%20my%20quote%20expired.%20Can%20you%20send%20a%20fresh%20one%3F`;
+}
+
+// ─── FORMAT HELPERS ──────────────────────────────────────────
+function fmt(n) {
+  return n.toLocaleString('en-IN');
+}
+
+function monthlyPremium(annual) {
+  return Math.round(annual / 12);
+}
+
+// legacy – kept for any remaining references
+function coverY2(c) { return c * 2; }
+function coverY5(c) { return c * 5; }
+
+// age-based bar width (rough scale: 30=42%, 35=58%, 40=78%, 45=100%)
+function ageBarWidth(a) {
+  if (a <= 30) return 42;
+  if (a >= 45) return 100;
+  const pct = ((a - 30) / 15) * 58 + 42;
+  return Math.min(100, Math.round(pct));
+}
+
+// age range label
+function ageRangeLabel(a) {
+  const lo = Math.floor(a/5)*5;
+  return `${lo}–${lo+5}`;
+}
+
+// expiry display
+function fmtExpiry(d) {
+  const months = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
+  return `${months[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
+}
+
+// PED config
+const pedConfig = {
+  diabetes: {
+    title: 'about your declared diabetes',
+    text: (w) => `diabetes-related claims have a <strong>${w}-year waiting period.</strong> everything else — accidents, surgery, hospitalization — is covered from day 1. the earlier you start, <strong>the sooner your waiting period ends.</strong>`
+  },
+  hypertension: {
+    title: 'about your declared hypertension',
+    text: (w) => `hypertension-related claims have a <strong>${w}-year waiting period.</strong> everything else — accidents, surgery, hospitalization — is covered from day 1. the earlier you start, <strong>the sooner your waiting period ends.</strong>`
+  },
+  thyroid: {
+    title: 'about your declared thyroid condition',
+    text: (w) => `thyroid-related claims have a <strong>${w}-year waiting period.</strong> everything else — accidents, surgery, hospitalization — is covered from day 1. the earlier you start, <strong>the sooner your waiting period ends.</strong>`
+  }
+};
+
+// ─── POPULATE DOM ──────────────────────────────────────────
+document.title = `${customerName} · your family health plan · plum`;
+
+// Customer name
+document.getElementById('customerName').textContent = customerName.charAt(0).toUpperCase() + customerName.slice(1).toLowerCase();
+
+// Advisor
+document.querySelectorAll('[id^="advisorFirstName"]').forEach(el => el.textContent = advisorFirst);
+document.getElementById('advisorName').textContent = advisorFull;
+document.getElementById('advisorAvatar').textContent = advisorFirst.charAt(0).toUpperCase();
+document.getElementById('advisorRating').textContent = advisorRating;
+document.getElementById('advisorFamilies').textContent = advisorFamilies;
+document.getElementById('advisorYears').textContent = advisorYears;
+document.getElementById('advisorNote').textContent = `"i looked at your situation and put together what i'd recommend for my own family at ${age}."`;
+
+const waMsg = encodeURIComponent(`Hi ${advisorFirst}, I've reviewed the plan you sent. Can we talk?`);
+const waUrl = `https://wa.me/${advisorWa}?text=${waMsg}`;
+document.getElementById('advisorWaLink').href = waUrl;
+document.getElementById('ctaWaLink').href = waUrl;
+document.getElementById('expiredWaLink').href = `https://wa.me/${advisorWa}?text=Hi%20${advisorFirst}%2C%20my%20quote%20expired.%20Can%20you%20send%20a%20fresh%20one%3F`;
+
+// ─── PLAN & COMPARE LOGIC ──────────────────────────────────────────
+
+const isICICI = insurer.toLowerCase().includes('icici');
+const isHDFC  = insurer.toLowerCase().includes('hdfc');
+
+const premiumFmt = fmt(premiumRaw);
+const moFmt      = fmt(monthlyPremium(premiumRaw));
+
+// ── helper: ICICI cover projections ──────────────────────────────
+// <10L: bonus = 20%/yr, capped at SI → year5 = min(cover * (1.2^5), cover*2) ≈ 9L for 5L
+// ≥10L: bonus = 100%/yr, unlimited → year5 = cover * 5
+function iciciCoverY5(c) {
+  if (c < 10) {
+    // 20%/yr capped at 1x SI (max doubles from base)
+    let v = c;
+    for (let i = 0; i < 5; i++) { v = Math.min(v + c * 0.2, c * 2); }
+    return Math.round(v);
+  }
+  return c * 5; // 100%/yr unlimited
+}
+
+// ── helper: HDFC cover projections ───────────────────────────────
+// 2x from day 1, then 50%/yr capped at SI
+// effective cap = base SI (50%/yr of original base, capped at base)
+// year5 = 2x base + min(5 * 0.5 * base, base) = 2x + 1x = 3x
+function hdfcCoverY1(c)  { return c * 2; }
+function hdfcCoverY5(c)  { return c * 3; }
+
+// ── PLAN CARD ─────────────────────────────────────────────────────
+document.getElementById('planInsurer').textContent = insurer;
+
+let stat3html, stat4html, noteHtml;
+
+if (isICICI) {
+  const y5 = iciciCoverY5(cover);
+  const bonus = cover >= 10 ? '100%<em>/yr</em>' : '20%<em>/yr</em>';
+  const bonusLabel = cover >= 10 ? 'renewal bonus, no cap, ever' : 'renewal bonus, always';
+
+  stat3html = `<div class="pstat"><div class="v">${bonus}</div><div class="l">${bonusLabel}</div></div>`;
+  stat4html = `<div class="pstat"><div class="v">90<em> days</em></div><div class="l">pre-hospital covered</div></div>`;
+
+  if (cover >= 10) {
+    noteHtml = '';
+  } else {
+    noteHtml = `starts at <strong>₹${premiumFmt}/yr,</strong> our most affordable plan for ₹${cover}L cover`;
+  }
+  document.getElementById('planGrid').innerHTML = `
+    <div class="pstat"><div class="v">₹${premiumFmt}<em>/yr</em></div><div class="l">that's ₹${moFmt}/mo, less than a dinner out</div></div>
+    <div class="pstat"><div class="v">₹${y5}L</div><div class="l">your cover in year 5</div></div>
+    ${stat3html}
+    ${stat4html}
+  `;
+
+} else if (isHDFC) {
+  const y1 = hdfcCoverY1(cover);
+  const y5 = hdfcCoverY5(cover);
+
+  document.getElementById('planGrid').innerHTML = `
+    <div class="pstat"><div class="v">₹${premiumFmt}<em>/yr</em></div><div class="l">that's ₹${moFmt}/mo, less than a dinner out</div></div>
+    <div class="pstat"><div class="v">₹${y1}L</div><div class="l">double cover from day 1</div></div>
+    <div class="pstat"><div class="v">∞<em> restore</em></div><div class="l">cover resets if exhausted</div></div>
+    <div class="pstat"><div class="v">60<em> days</em></div><div class="l">pre-hospital covered</div></div>
+  `;
+  noteHtml = `double cover immediately: ₹${cover}L becomes <strong>₹${y1}L from day 1.</strong> if you exhaust it, it resets. reaches <strong>₹${y5}L by year 5.</strong>`;
+
+} else {
+  // fallback for other insurers
+  document.getElementById('planGrid').innerHTML = `
+    <div class="pstat"><div class="v">₹${premiumFmt}<em>/yr</em></div><div class="l">that's ₹${moFmt}/mo</div></div>
+    <div class="pstat"><div class="v">₹${cover}L</div><div class="l">sum insured</div></div>
+    <div class="pstat"><div class="v">-</div><div class="l">renewal bonus</div></div>
+    <div class="pstat"><div class="v">-</div><div class="l">pre-hospital</div></div>
+  `;
+  noteHtml = `your ₹${cover}L cover, recommended by ${advisorFirst} for your age and profile`;
+}
+
+document.getElementById('planNote').innerHTML = noteHtml;
+if (!noteHtml) document.getElementById('planNote').style.display = 'none';
+
+// ── COMPARISON TABLE ──────────────────────────────────────────────
+// Recommended plan always LEFT (first column), other always RIGHT (second column, muted)
+
+// Data for each plan
+const iciciY5 = iciciCoverY5(cover);
+const hdfcY5  = hdfcCoverY5(cover);
+const iciciY1 = cover; // no 2x day 1
+const hdfcY1  = hdfcCoverY1(cover);
+
+const iciciBonus = cover >= 10 ? '100%/yr, no cap' : '20%/yr, capped';
+const hdfcBonus  = '50%/yr, capped';
+
+// ── COMPARISON TABLE pricing ──────────────────────────────────────
+// ICICI recommended: HDFC shown as +17.67% of ICICI premium
+// HDFC recommended: ICICI shown as -12.3% of HDFC premium (i.e. ICICI = HDFC / 1.123 * 0.877... = HDFC * 0.877)
+const hdfcDerivedPremium = isICICI ? Math.round(premiumRaw * 1.1767) : premiumRaw;
+const iciciDerivedPremium = isHDFC  ? Math.round(premiumRaw * (1 - 0.123)) : premiumRaw;
+
+const iciciData = {
+  label: insurerShort || 'icici elevate',
+  premium: `₹${fmt(iciciDerivedPremium)}`,
+  coverY5: `₹${iciciY5}L`,
+  bonus: iciciBonus,
+  twoX: 'not included',
+  preHosp: '90 days',
+};
+const hdfcData = {
+  label: 'hdfc optima',
+  premium: `₹${fmt(hdfcDerivedPremium)}`,
+  coverY5: `₹${hdfcY5}L`,
+  bonus: hdfcBonus,
+  twoX: `+₹${cover}L`,
+  preHosp: '60 days',
+};
+
+let recData, altData, recWins, altWins;
+
+if (isICICI) {
+  recData = iciciData;
+  altData = hdfcData;
+  // rows where ICICI wins
+  recWins = { premium: true, coverY5: cover >= 10, bonus: cover >= 10, twoX: false, preHosp: true };
+  altWins = { premium: false, coverY5: cover < 10, bonus: cover < 10, twoX: true,  preHosp: false };
+} else {
+  recData = hdfcData;
+  altData = iciciData;
+  recWins = { premium: true, coverY5: cover < 10,  bonus: false, twoX: true,  preHosp: false };
+  altWins = { premium: false, coverY5: cover >= 10, bonus: true,  twoX: false, preHosp: true };
+  // for HDFC recommended, show 2x from day 1 as the key stat
+  recData.coverY5 = `₹${hdfcY5}L`;
+  altData.coverY5 = `₹${iciciY5}L`;
+}
+
+function cval(val, wins, muted) {
+  if (muted) return `<div class="cv muted">${val}</div>`;
+  if (wins)  return `<div class="cv win">${val}</div>`;
+  return `<div class="cv">${val}</div>`;
+}
+
+const rows = [
+  { label: 'annual premium', key: 'premium',  alt: 0 },
+  { label: 'cover in year 5', key: 'coverY5', alt: 1 },
+  { label: 'renewal bonus',   key: 'bonus',   alt: 0 },
+  { label: '2x cover day 1',  key: 'twoX',    alt: 1 },
+  { label: 'pre-hospital',    key: 'preHosp', alt: 0 },
+];
+
+let rowsHtml = '';
+rows.forEach((r, i) => {
+  const bg = i % 2 === 0 ? ' alt' : '';
+  const recVal = recData[r.key];
+  const altVal = altData[r.key];
+  const rWin = isICICI ? recWins[r.key] : recWins[r.key];
+  const aWin = isICICI ? altWins[r.key] : altWins[r.key];
+  // highlight row if recommended plan wins this row
+  const hlRow = rWin ? ' highlight-row' : '';
+  rowsHtml += `
+    <div class="crow${bg}${hlRow}">
+      <div class="cl">${r.label}</div>
+      ${cval(recVal, rWin, false)}
+      ${cval(altVal, false, true)}
+    </div>`;
+});
+
+document.getElementById('compareHead').innerHTML = `
+  <div>feature</div>
+  <div class="hl">${recData.label}</div>
+  <div class="muted-hd">also considered<br><span class="compare-also">${altData.label}</span></div>
+`;
+
+document.getElementById('compareRows').innerHTML = rowsHtml;
+
+// Rohan's view — from URL param, fallback to dynamic copy
+const advisorView = get('advisor_view', '');
+let footerCopy;
+if (advisorView) {
+  footerCopy = `<strong>${advisorFirst}</strong>'s view: ${advisorView}`;
+} else if (isICICI && cover >= 10) {
+  footerCopy = `<strong>${advisorFirst}</strong>'s view: long-term, your cover grows furthest with icici elevate. that's why i picked this for you.`;
+} else if (isICICI && cover < 10) {
+  footerCopy = `<strong>${advisorFirst}</strong>'s view: same core coverage, better price. for the budget, icici elevate is the right call here.`;
+} else {
+  footerCopy = `<strong>${advisorFirst}</strong>'s view: hdfc gives double cover immediately and resets if you use it. for a family, that matters more than year-5 growth.`;
+}
+document.getElementById('compareFooer').innerHTML = footerCopy;
+
+// Age
+document.getElementById('yourAgePremium').textContent = `your price`;
+document.getElementById('yourAgeFill').style.width = ageBarWidth(age) + '%';
+document.querySelectorAll('#planCover').forEach(el => el.textContent = cover);
+
+
+// PED
+if (ped && ped !== 'none' && pedConfig[ped]) {
+  const pedEl = document.getElementById('pedSection');
+  pedEl.style.display = 'flex';
+  document.getElementById('pedTitle').textContent = pedConfig[ped].title;
+  document.getElementById('pedText').innerHTML = pedConfig[ped].text(pedWait);
+  document.getElementById('waitFact').innerHTML = `with declared ${ped}, your ${pedWait}-year waiting period starts from the day you buy. every month you delay is a month your family is not fully covered.`;
+}
+
+// Expiry
+document.getElementById('expiryDisplay').textContent = fmtExpiry(expiryDate);
+
+// Share button
+document.getElementById('shareBtn').href = `https://wa.me/?text=${encodeURIComponent(`check out this health plan from plum — ${window.location.href}`)}`;
+
+// ─── FLOATER LOGIC ──────────────────────────────────────────
+const slides = [
+  { avatar:"R", text:'"my father was admitted at 11pm. by morning, cashless was approved."', attr:"rahul sharma · operations analyst" },
+  { avatar:"S", text:'"switched jobs — corporate cover gone overnight. personal plan saved us."', attr:"saurabh moody · plum personal customer" },
+  { avatar:"K", text:'"felt like a friend in insurance, not a salesperson. genuinely helpful."', attr:"kawaljeet · director of operations" }
+];
+let cur = 0;
+function goSlide(i) {
+  cur = i;
+  const s = slides[i];
+  document.getElementById("f-avatar").textContent = s.avatar;
+  document.getElementById("f-text").textContent = s.text;
+  document.getElementById("f-attr").textContent = s.attr;
+  document.querySelectorAll(".fdot").forEach((d,j) => d.classList.toggle("active", j===i));
+}
+setInterval(() => goSlide((cur+1) % slides.length), 4000);
+
+const cta = document.querySelector(".cta");
+const floater = document.getElementById("floater");
+const obs = new IntersectionObserver(entries => {
+  floater.style.opacity = entries[0].isIntersecting ? "0" : "1";
+  floater.style.pointerEvents = entries[0].isIntersecting ? "none" : "all";
+  floater.style.transition = "opacity .3s ease";
+}, { threshold: 0.1 });
+obs.observe(cta);
+</script>
+</body>
+</html>
