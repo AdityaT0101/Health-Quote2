@@ -410,6 +410,8 @@ body{font-family:'DM Sans',sans-serif;background:#F7EFE8;color:var(--maroon);max
 </div>
 
 <script>
+
+console.log("hello");
 // ─── PARAM PARSER ──────────────────────────────────────────
 const p = new URLSearchParams(window.location.search);
 const get = (key, fallback='') => p.get(key) || fallback;
@@ -546,7 +548,9 @@ document.getElementById('expiredWaLink').href = `https://wa.me/${advisorWa}?text
 // ─── PLAN & COMPARE LOGIC ──────────────────────────────────────────
 
 const isICICI = insurer.toLowerCase().includes('icici');
+console.log(isICICI);
 const isHDFC  = insurer.toLowerCase().includes('hdfc');
+console.log(isHDFC);
 
 const premiumFmt = fmt(premiumRaw);
 const moFmt      = fmt(monthlyPremium(premiumRaw));
@@ -641,13 +645,14 @@ const hdfcDerivedPremium = isICICI ? Math.round(premiumRaw * 1.1767) : premiumRa
 const iciciDerivedPremium = isHDFC  ? Math.round(premiumRaw * (1 - 0.123)) : premiumRaw;
 
 const iciciData = {
-  label: insurerShort || 'icici elevate',
+  label: 'icici elevate',
   premium: `₹${fmt(iciciDerivedPremium)}`,
   coverY5: `₹${iciciY5}L`,
   bonus: iciciBonus,
   twoX: 'not included',
   preHosp: '90 days',
 };
+
 const hdfcData = {
   label: 'hdfc optima',
   premium: `₹${fmt(hdfcDerivedPremium)}`,
@@ -674,6 +679,8 @@ if (isICICI) {
   hdfcData.coverY5 = `₹${hdfcY5}L`;
   iciciData.coverY5 = `₹${iciciY5}L`;
 }
+
+console.log(altData+" "+recData);
 
 function cval(val, wins, muted) {
   if (muted) return `<div class="cv muted">${val}</div>`;
