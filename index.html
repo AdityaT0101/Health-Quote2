@@ -119,9 +119,10 @@ body{max-width:430px;margin:0 auto;padding-bottom:80px;}
   <div class="field" id="pedWaitField" style="display:none;">
     <label>waiting period (years)</label>
     <select id="ped_wait" onchange="update()">
-      <option value="2">2 years</option>
-      <option value="4">4 years</option>
       <option value="1">1 year</option>
+      <option value="2">2 years</option>
+      <option value="3">3 years</option>
+      <option value="4">4 year</option>
     </select>
   </div>
 </div>
@@ -244,7 +245,7 @@ body{max-width:430px;margin:0 auto;padding-bottom:80px;}
 
 <!-- ACTIONS -->
 <div class="actions" id="actions" style="display:none;">
-  <button class="btn btn-copy" id="copyBtn" onclick="copyLink()">
+  <button class="btn btn-copy" id="copyBtn" onclick="handleCopy()">
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
     copy link
   </button>
@@ -262,6 +263,46 @@ body{max-width:430px;margin:0 auto;padding-bottom:80px;}
 <script>
 let expiryDays = 7;
 let generatedUrl = '';
+let shortUrl = '';
+const BITLY_TOKEN = 'e02aba56290236977db530ac9e0ef81ceaa71356'
+
+async function shortenUrl(longUrl) {
+  try {
+    const res = await fetch('https://api-ssl.bitly.com/v4/shorten', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${BITLY_TOKEN}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ long_url: longUrl })
+    });
+    const data = await res.json();
+    return data.link || longUrl; // fallback to long url if error
+  } catch(e) {
+    return longUrl; // fallback
+  }
+}
+
+async function handleCopy() {
+  if (!generatedUrl) return;
+  const btn = document.getElementById('copyBtn');
+  btn.innerHTML = `⏳ shortening...`;
+  btn.disabled = true;
+
+  shortUrl = await shortenUrl(generatedUrl);
+  document.getElementById('urlText').textContent = shortUrl; // show short url in box
+
+  navigator.clipboard.writeText(shortUrl).then(() => {
+    btn.disabled = false;
+    btn.classList.add('copied');
+    btn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> copied!`;
+    showToast('✓ short link copied!');
+    setTimeout(() => {
+      btn.classList.remove('copied');
+      btn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> copy link`;
+    }, 2000);
+  });
+}
 
 function setExpiry(days, btn) {
   expiryDays = days;
@@ -392,10 +433,12 @@ function copyLink() {
   });
 }
 
-function shareWa() {
+async function shareWa() {
   if (!generatedUrl) return;
   const name = document.getElementById('name').value.trim();
-  const msg = encodeURIComponent(`hi ${name}, here's your personalised health plan from plum — take 3 minutes to read it 👇\n\n${generatedUrl}`);
+  const urlToShare = shortUrl || await shortenUrl(generatedUrl);
+  shortUrl = urlToShare;
+  const msg = encodeURIComponent(`hi ${name}, here's your personalised health plan from plum — take 3 minutes to read it 👇\n\n${urlToShare}`);
   window.open(`https://wa.me/?text=${msg}`, '_blank');
 }
 
