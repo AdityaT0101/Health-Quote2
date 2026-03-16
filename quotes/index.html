@@ -671,8 +671,8 @@ if (isICICI) {
   recWins = { premium: true, coverY5: cover < 10,  bonus: false, twoX: true,  preHosp: false };
   altWins = { premium: false, coverY5: cover >= 10, bonus: true,  twoX: false, preHosp: true };
   // for HDFC recommended, show 2x from day 1 as the key stat
-  recData.coverY5 = `₹${hdfcY5}L`;
-  altData.coverY5 = `₹${iciciY5}L`;
+  hdfcData.coverY5 = `₹${hdfcY5}L`;
+  iciciData.coverY5 = `₹${iciciY5}L`;
 }
 
 function cval(val, wins, muted) {
